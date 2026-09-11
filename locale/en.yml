@@ -1,0 +1,72 @@
+ernestdefoe-cascade:
+
+  # Strings under `forum.` load on the forum frontend only, `admin.` on the
+  # admin frontend only, and `lib.`/`ref.` on both. Nothing in Cascade is
+  # hardcoded English in a component — every visible string is here so a
+  # translator can reach it.
+
+  forum:
+
+    # The member's own preset picker. Shown on their settings page only when an
+    # admin has left "Let members choose their own" on.
+    #
+    # The platform names are deliberate: "Wall" and "Timeline" told nobody what
+    # they were choosing. The values BEHIND these labels are still wall /
+    # timeline / stream and must not be translated - see src/Presets.php.
+    preset:
+      heading: Feed style
+      help: How discussions are laid out for you. This changes nothing for anyone else.
+      follow_forum: Use the forum's default
+      wall: Facebook-style — cards
+      timeline: X-style — rows
+      stream: Bluesky-style — inset rows
+      save_failed: Your feed style could not be saved. Please try again.
+
+    # Labels for fof/reactions' default set. A reaction an admin adds
+    # later falls back to its own shortname, so nothing here is required.
+    reactions:
+      thumbsup: "Like"
+      heart: "Love"
+      laughing: "Haha"
+      tada: "Celebrate"
+      confused: "Confused"
+      thumbsdown: "Dislike"
+
+    composer:
+      placeholder: "Start a discussion…"
+      cannot_start: "You do not have permission to start a discussion"
+
+    row:
+      react_button: "React"
+      react_failed: "Your reaction did not save. Try again in a moment."
+      reply_button: "Reply"
+      share_button: "Share"
+      share_copied: "Link copied"
+      media_more: "+{count}"
+      view_replies: "{count, plural, one {View # more reply} other {View all # replies}}"
+      see_more: "See more"
+      see_less: "See less"
+      open_post: "Open this discussion"
+      see_more_loading: "Loading…"
+      replies_failed: "Could not load the replies. Try again in a moment."
+
+    modal:
+      title: "{username}'s post"
+      replies_title: "{count, plural, one {# reply} other {# replies}}"
+      no_replies: "No replies yet."
+      reply_button: "Write a reply"
+      open_full: "Open full page"
+
+    rail:
+      # The hashtag cloud. Only rendered when ernestdefoe/hashtags is enabled.
+      hashtags_title: Hashtags
+      hashtags_count: "{count, plural, one {# post} other {# posts}}"
+      trending_title: "Trending"
+      trending_week: "Trending this week"
+      trending_month: "Trending this month"
+      trending_all: "Most discussed"
+      trending_count: "{count, plural, one {# discussion} other {# discussions}}"
+
+  admin:
+    settings:
+      title: "Cascade"
