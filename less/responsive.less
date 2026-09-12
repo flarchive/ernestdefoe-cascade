@@ -1,0 +1,228 @@
+// ============================================================================
+// Responsive
+//
+// Imported LAST, deliberately. An unconditional rule that appears after a
+// media-query rule of equal specificity wins even inside the query, so every
+// override here would be silently beaten if this file moved further up.
+// ============================================================================
+
+// ── Below the widescreen band: drop the right rail ───────────────────────────
+@media (max-width: 1199px) {
+  .Cascade-rail {
+    display: none;
+  }
+
+  .App--index .Page-content {
+    width: auto;
+    flex: 1 1 auto;
+
+    /*
+     * 🚨 No max-width here.
+     *
+     * The comment this replaces claimed the reclaimed space went back to the
+     * feed, and `--cs-feed-width` quietly stopped that from happening: with the
+     * rail gone the column still capped itself, leaving 122px of empty ground at
+     * 1100 and 172px at 1199. On the two column presets that band was bounded by
+     * the column's own 1px rule in --cs-line, so what you actually saw was a
+     * light grey line with a strip of dead page between it and the scrollbar.
+     *
+     * The whole point of hiding the rail is to give its width to the feed, so
+     * let the feed take it.
+     */
+    max-width: none;
+  }
+
+  /*
+   * And no side rules in this band either. With no rails the column IS the
+   * page, so a rule down each side is not the edge of a column any more — it is
+   * a stray line a few pixels in from the window edge.
+   */
+  [data-cascade-preset='timeline'] .App--index .Page-content,
+  [data-cascade-preset='stream'] .App--index .Page-content {
+    border-inline: 0;
+  }
+}
+
+// ── Tablet and below: no standing rails at all ───────────────────────────────
+@media @phone, @tablet {
+  .App--index {
+    .Page-content {
+      width: 100%;
+      max-width: none;
+      flex: 1 1 auto;
+      margin-top: 0;
+    }
+
+    .IndexPage-nav {
+      position: static;
+    }
+
+    /*
+     * Undo the pinned left rail. On a phone the sidebar is a dropdown, not a
+     * column, and a sticky dropdown hangs over the feed.
+     *
+     * The trailing gutter goes too: it is there to separate the rail from the
+     * feed column beside it, and down here there is no column beside it.
+     */
+    .Page-sidebar {
+      position: static;
+      padding-inline-end: 0;
+    }
+  }
+
+  /*
+   * Both column presets lose their side rules here. The column IS the viewport
+   * at this width, so the borders sit hard against the screen edge with the
+   * avatar 1px inside them — the rule reads as a frame the content is jammed
+   * into rather than as the edge of a column.
+   *
+   * 🚨 Stream was missing from this list. It inherits the border from its own
+   * preset file, not from Timeline's, so adding a preset means adding it here
+   * too — the symptom is subtle enough to survive a review.
+   */
+  [data-cascade-preset='timeline'] .App--index .Page-content,
+  [data-cascade-preset='stream'] .App--index .Page-content {
+    border-inline: 0;
+  }
+
+  [data-cascade-preset='timeline'] .App--index .IndexPage-toolbar {
+    top: var(--header-height-phone);
+  }
+
+  /*
+   * Wall stops being cards on a narrow screen.
+   *
+   * A card needs ground around it to read as raised. There is no room for that
+   * here, so the surface ends up covering almost the whole viewport and the
+   * ground survives only as slivers at the edges — which does not read as a
+   * card, it reads as a lighter grey panel that is slightly the wrong size. It
+   * looked worse still because the toolbar and composer sit inside the
+   * container's 15px padding while the rows are deliberately full-bleed, so the
+   * lighter area changed width halfway down the page.
+   *
+   * Everything paints the ground instead and rows are divided by a hairline.
+   * That is what the lineage itself does at this width, and it makes the
+   * inset-vs-full-bleed mismatch invisible rather than merely less obvious:
+   * with no colour change at the edges there is nothing left to misalign.
+   *
+   * Timeline and Stream need none of this — their surface is already the
+   * ground, which is the whole idea of those two.
+   */
+  [data-cascade-preset='wall'] {
+    // The gap existed to separate cards. Hairlines do that now, and a gap as
+    // well would leave a band of ground between every pair of rows.
+    .DiscussionList-discussions {
+      gap: 0;
+    }
+
+    .DiscussionListItem-content,
+    .Cascade-composer,
+    .IndexPage-toolbar {
+      background: var(--body-bg);
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    /*
+     * 🚨 `li + li`, not `.DiscussionListItem + .DiscussionListItem`. Every row
+     * is a div that is the ONLY child of its own <li>, so no two rows are ever
+     * adjacent siblings and the shorter selector matches nothing at all.
+     */
+    .DiscussionList-discussions > li + li .DiscussionListItem-content {
+      border-top: 1px solid var(--cs-line);
+    }
+
+    .Cascade-composer,
+    .IndexPage-toolbar {
+      border-bottom: 1px solid var(--cs-line);
+    }
+  }
+
+  .Cascade-composer {
+    border-radius: 0;
+  }
+
+  /*
+   * Reclaim the left gutter.
+   *
+   * At 420px the row's padding plus the avatar column pushed the text 69px in
+   * from the left while everything ended 17px from the right — so the reaction
+   * rail and the reply bubble looked jammed against the right edge, because
+   * next to a 69px indent 17px reads as nothing. These are the same tokens the
+   * width ladder tunes upward on a big screen, turned down here.
+   */
+  [data-cascade-preset='wall'],
+  [data-cascade-preset='timeline'],
+  [data-cascade-preset='stream'] {
+    --cs-avatar:     36px;
+    --cs-avatar-sm:  28px;
+    --cs-row-pad-x:  14px;
+  }
+
+  /*
+   * A reply names its author inside the bubble, so the avatar beside it is a
+   * second 40px indent buying nothing. Dropping it on a narrow screen is what
+   * stops the bubble — the one element down there with a lighter background —
+   * from being a pale slab pinned to the right edge. It gets ~50px back.
+   */
+  .Cascade-reply {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .Cascade-reply-avatar {
+    display: none;
+  }
+
+  /*
+   * A little more air on the right than on the left.
+   *
+   * Nothing here overflows — the reaction pips and the reply bubble both end
+   * exactly where the rest of the column does. But the avatar gutter means the
+   * text starts ~61px in while it ends ~15px from the other edge, and against
+   * that much left indent 15px reads as nothing. Widening only the trailing
+   * side costs four pixels of measure and buys back the margin the eye is
+   * looking for.
+   */
+  .DiscussionListItem-content {
+    padding-inline-end: 20px;
+  }
+
+  .Cascade-media {
+    --cs-media-height: 200px;
+  }
+}
+
+// ── Phone only ───────────────────────────────────────────────────────────────
+@media @phone {
+  /*
+   * React / Reply / Share are the primary actions on a phone, and they were
+   * 104x26 — measured. Both Apple and Android put the floor for a touch target
+   * at 44pt/48dp, and 26px is comfortably under it: reachable with a fingertip
+   * only if you aim.
+   *
+   * min-height rather than padding, so the row grows into a proper target
+   * without moving the label or the icon relative to each other. Desktop keeps
+   * its tighter bar — a pointer does not need the margin.
+   */
+  .Cascade-engagement-action {
+    font-size: 13px;
+    gap: 6px;
+    min-height: 44px;
+  }
+
+  // Labels would wrap at this width; the icon carries the meaning and the
+  // accessible name stays on the button.
+  .Cascade-composer-action span:not(.icon) {
+    display: none;
+  }
+}
+
+// ── Motion ───────────────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .Cascade-newPosts,
+  .Cascade-media img {
+    transition: none;
+    animation: none;
+  }
+}
