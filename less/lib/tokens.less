@@ -1,0 +1,301 @@
+// ============================================================================
+// Tokens
+//
+// Two rules govern everything in this file.
+//
+// 1. Colour is declared inside core's own `[data-theme^=light|dark]` blocks,
+//    never behind `prefers-color-scheme`. rc.8 ships four modes — light, dark,
+//    light-hc, dark-hc — with a real user preference behind them. A theme that
+//    keys off the media query fights that preference and leaves both
+//    high-contrast modes unstyled.
+//
+// 2. Cascade sets core variables that core actually defines, and namespaces
+//    everything of its own as `--cs-*`. It never invents an alias pointing at
+//    a variable core does not define: such a declaration is invalid at
+//    computed-value time, the property falls back to *inheritance*, and you get
+//    white-on-white in places nobody tests.
+// ============================================================================
+
+// There is deliberately NO Cascade accent setting. The forum already has one
+// in Appearance, and core precomputes button contrast colours from it in LESS
+// (the YIQ branch in root.less). A second accent applied as a CSS variable at
+// runtime would recolour Cascade's own components while leaving every core
+// button's computed text colour pointing at the old one — the two would drift
+// apart in exactly the places nobody screenshots.
+//
+// Wall reads best around #1877F2 and Timeline around #1D9BF0; both are set the
+// normal way, in Appearance.
+
+// ── Geometry, shared by both presets ─────────────────────────────────────────
+:root {
+  --cs-rail-left:     252px;
+  --cs-gap:           20px;
+
+  --cs-avatar:        40px;
+  --cs-avatar-sm:     32px;
+
+  --cs-row-pad-x:     16px;
+  --cs-row-pad-y:     12px;
+
+  --cs-media-height:  268px;
+  --cs-media-radius:  0px;
+
+  --cs-accent:        var(--primary-color);
+
+  // Cascade renders its own author line, so core's fixed avatar gutter would
+  // only add dead space to the left of every row.
+  --avatar-column-width: 0px;
+}
+
+// ── Wall: the Facebook lineage ───────────────────────────────────────────────
+// Cards on a grey ground, a dense header, a labelled engagement bar.
+[data-cascade-preset='wall'] {
+  --cs-feed-width:    576px;
+  --cs-rail-right:    300px;
+  --cs-radius:        8px;
+  --cs-media-radius:  0px;
+
+  --container-hd:     1168px;
+  --container-xl:     1168px;
+  --container-xxl:    1168px;
+}
+
+
+
+
+// ── Stream: the Bluesky lineage ──────────────────────────────────────────────
+// Hairline rows like Timeline, but the separators are INSET to the content
+// column rather than spanning the card, the rhythm is looser, and the action
+// row uses pill hovers with the count beside the icon. That inset rule is the
+// signature: it is what stops a row reading as a slab and is the clearest thing
+// separating this from Timeline at a glance.
+[data-cascade-preset='stream'] {
+  --cs-feed-width:    604px;
+  --cs-rail-right:    324px;
+  --cs-gap:           0px;
+  --cs-radius:        12px;
+  --cs-media-radius:  12px;
+  --cs-media-height:  260px;
+  --cs-avatar:        42px;
+  --cs-row-pad-y:     14px;
+
+  --container-hd:     1180px;
+  --container-xl:     1180px;
+  --container-xxl:    1180px;
+}
+
+
+
+
+
+// ── Timeline: the X lineage ──────────────────────────────────────────────────
+// No cards. A 600px column between two hairlines, a sticky tab strip, and an
+// action bar that stays quiet until it is hovered.
+[data-cascade-preset='timeline'] {
+  --cs-feed-width:    602px;
+  --cs-rail-right:    348px;
+  --cs-gap:           0px;
+  --cs-radius:        16px;
+  --cs-media-radius:  16px;
+  --cs-media-height:  252px;
+
+  --container-hd:     1202px;
+  --container-xl:     1202px;
+  --container-xxl:    1202px;
+}
+
+
+
+
+
+
+
+// ── Derived, both presets ────────────────────────────────────────────────────
+// These reference the tokens above rather than restating colours, so a preset
+// only ever has to declare the block it owns.
+:root {
+  --discussion-title-color:        var(--heading-color);
+  --discussion-list-item-bg-hover: var(--cs-hover);
+  --avatar-bg:                     var(--control-bg);
+}
+
+// The page ground, stated explicitly and at a specificity that can win.
+//
+// Core does not set a body background in its stylesheet at all - it inlines it
+// as critical CSS in <head>, so the dark background is painted before any
+// stylesheet loads and there is no flash:
+//
+//   body{margin:0;background:#fff}
+//   [data-theme^=dark] body{background:<computed from theme_secondary_color>}
+//
+// That second rule is `[data-theme^=dark] body`, specificity (0,1,1), and the
+// colour in it is derived from the forum's secondary colour - so on a forum
+// with a teal secondary the dark ground is a dark teal. Setting `--body-bg`
+// does nothing about it: nothing reads that variable for the body.
+//
+// Matching (0,1,1) and loading later is what takes it. This is also why Cascade
+// cannot simply be a palette: the ground has to be claimed.
+[data-cascade-preset] body {
+  background: var(--body-bg);
+}
+
+// ── Colour: one graphite ramp, shared by every preset ────────────────────────
+//
+// The presets used to carry their lineage's brand palette too — Facebook's
+// blue-grey, X's navy, Bluesky's slate. That made the resemblance louder than
+// it needed to be, and it meant three colour systems to keep legible across
+// four theme modes instead of one.
+//
+// They now share a single NEUTRAL graphite ramp and are told apart by their
+// structure alone: cards on a tinted ground, hairline rows, or inset rows. That
+// is the part that actually changes how a feed reads.
+//
+// The ramp has no hue. A grey with a cast reads as "almost blue" next to the
+// forum's accent and fights it; a true neutral lets the accent be the only
+// colour on the page, which is what makes an accent work.
+@g-white:   #FFFFFF;
+@g-100:     #F4F5F6;
+@g-150:     #ECEDEF;
+@g-200:     #DEE0E3;
+@g-300:     #C7CACE;
+@g-ink:     #1A1C1E;
+@g-muted:   #5B6166;
+
+@g-950:     #131415;  // Wall's ground: the unlit space behind the cards
+@g-900:     #1A1B1D;  // the row presets' ground and surface both
+@g-850:     #202225;  // Wall's cards
+@g-800:     #26282B;  // hover
+@g-line-d:  #303337;
+@g-ink-d:   #E7E9EA;
+@g-muted-d: #9AA0A6;
+
+// ── Wall: cards, so the ground and the surface must differ ───────────────────
+//
+// 🚨 The gap between them is the whole design, and it has to be bigger than it
+// looks like it should be. Facebook's own pairing is 12 points of value and
+// leans on a blue cast in both to separate them; strip the cast for a true
+// neutral and 12 points is not enough — the cards dissolve into the page. This
+// ramp runs 18 points (#131415 to #202225), which reads as a raised card at a
+// glance without turning the ground into a black void.
+[data-cascade-preset='wall'][data-theme^='light'] {
+  --body-bg:        @g-100;
+  --cs-surface:     @g-white;
+  --cs-line:        @g-200;
+  --cs-hover:       @g-150;
+  --control-bg:     @g-150;
+  --control-color:  @g-ink;
+  --text-color:     @g-ink;
+  --heading-color:  @g-ink;
+  --muted-color:    @g-muted;
+  --header-bg:      @g-white;
+  --header-color:   @g-ink;
+  --cs-shadow:      0 1px 2px rgba(0, 0, 0, .18);
+  --cs-scrollbar:   @g-300;
+}
+
+[data-cascade-preset='wall'][data-theme^='dark'] {
+  --body-bg:        @g-950;
+  --cs-surface:     @g-850;
+  --cs-line:        @g-line-d;
+  --cs-hover:       @g-800;
+  --control-bg:     @g-800;
+  --control-color:  @g-ink-d;
+  --text-color:     @g-ink-d;
+  --heading-color:  #F2F3F4;
+  --muted-color:    @g-muted-d;
+  // Between the two, so the bar reads as chrome rather than as another card.
+  --header-bg:      #1B1D1F;
+  --header-color:   @g-ink-d;
+  // A darker ground needs a deeper shadow to register at all.
+  --cs-shadow:      0 1px 2px rgba(0, 0, 0, .6);
+  --cs-scrollbar:   #3A3E42;
+}
+
+// ── Timeline and Stream: no cards, so ground and surface are the same ────────
+// The separators do all the dividing. Giving the rows a surface of their own
+// would put a card back under them, which is the thing these two are not.
+[data-cascade-preset='timeline'][data-theme^='light'],
+[data-cascade-preset='stream'][data-theme^='light'] {
+  --body-bg:        @g-white;
+  --cs-surface:     @g-white;
+  --cs-line:        @g-200;
+  --cs-hover:       @g-150;
+  --control-bg:     @g-150;
+  --control-color:  @g-ink;
+  --text-color:     @g-ink;
+  --heading-color:  @g-ink;
+  --muted-color:    @g-muted;
+  --header-bg:      @g-white;
+  --header-color:   @g-ink;
+  --cs-shadow:      none;
+  --cs-scrollbar:   @g-300;
+}
+
+[data-cascade-preset='timeline'][data-theme^='dark'],
+[data-cascade-preset='stream'][data-theme^='dark'] {
+  --body-bg:        @g-900;
+  --cs-surface:     @g-900;
+  --cs-line:        #2B2E31;
+  --cs-hover:       #232528;
+  --control-bg:     #232528;
+  --control-color:  @g-ink-d;
+  --text-color:     @g-ink-d;
+  --heading-color:  #F5F6F7;
+  --muted-color:    @g-muted-d;
+  --header-bg:      @g-900;
+  --header-color:   @g-ink-d;
+  --cs-shadow:      none;
+  --cs-scrollbar:   #3A3E42;
+}
+
+// ── High contrast ────────────────────────────────────────────────────────────
+// rc.8 ships four modes with a real user preference behind them. A reader who
+// asked for maximum separation gets true black and a brighter muted tone; one
+// who asked for high-contrast light gets a darker rule and darker meta text.
+[data-cascade-preset='wall'][data-theme='dark-hc'],
+[data-cascade-preset='timeline'][data-theme='dark-hc'],
+[data-cascade-preset='stream'][data-theme='dark-hc'] {
+  --body-bg:        #000000;
+  --cs-line:        #2A2D30;
+  --cs-hover:       #141618;
+  --control-bg:     #141618;
+  --muted-color:    #ADB3B8;
+  --header-bg:      #000000;
+}
+
+// Wall still needs its cards to lift off a black ground.
+[data-cascade-preset='wall'][data-theme='dark-hc'] {
+  --cs-surface:     #17191B;
+}
+
+[data-cascade-preset='timeline'][data-theme='dark-hc'],
+[data-cascade-preset='stream'][data-theme='dark-hc'] {
+  --cs-surface:     #000000;
+}
+
+[data-cascade-preset='wall'][data-theme='light-hc'],
+[data-cascade-preset='timeline'][data-theme='light-hc'],
+[data-cascade-preset='stream'][data-theme='light-hc'] {
+  --cs-line:        #B9BEC3;
+  --muted-color:    #3A3F44;
+}
+
+// ── The scrollbar ────────────────────────────────────────────────────────────
+//
+// 🚨 This is a real, visible part of the page that no amount of styling
+// ELEMENTS can reach, and it is invisible to automated checking: headless
+// Chrome and the in-app browser both use overlay scrollbars, so the strip
+// simply is not in any screenshot they produce. It took a photo of a real
+// window to find.
+//
+// `color-scheme: dark` gets Chrome to paint a DARK scrollbar rather than a
+// light one, which core already sets — but "dark" means #2B2B2B, and against
+// this ground that is a grey strip running the full height of the window,
+// immediately left of the thumb.
+//
+// `scrollbar-color` takes `<thumb> <track>`. Painting the track with the page's
+// own ground makes the strip disappear; the thumb stays visible because it is
+// the only part that is meant to be.
+[data-cascade-preset] {
+  scrollbar-color: var(--cs-scrollbar) var(--body-bg);
+}
