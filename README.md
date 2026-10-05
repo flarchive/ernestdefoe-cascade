@@ -2,13 +2,24 @@
 
 > **Read-only archive of released versions of ernestdefoe/cascade.** Not for installation: use [Packagist](https://packagist.org/packages/ernestdefoe/cascade) or the [upstream repository](https://github.com/ernestdefoe/cascade).
 
-**0** versions archived · Latest: [`v0.3.4`](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.3.4) · License: `MIT` · Flarum: `^2.0`
+**14** versions archived · Latest: [`v0.3.4`](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.3.4) · License: `MIT` · Flarum: `^2.0`
 
 ## Archived Versions
 
 | Version | Released | Flarum | Source |
 |---|---|---|---|
-| — | — | — | — |
+| `v0.1.0` | 2026-09-11 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.1.0) |
+| `v0.1.1` | 2026-09-11 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.1.1) |
+| `v0.2.0` | 2026-09-11 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.0) |
+| `v0.2.1` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.1) |
+| `v0.2.2` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.2) |
+| `v0.2.3` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.3) |
+| `v0.2.4` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.4) |
+| `v0.2.5` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.5) |
+| `v0.2.6` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.2.6) |
+| `v0.3.0` | 2026-09-12 | `^2.0` | [Browse](https://github.com/flarchive/ernestdefoe-cascade/tree/archive/v0.3.0) |
+
+[View all 14 versions](https://github.com/flarchive/ernestdefoe-cascade/tags)
 
 Catalog entry: [packages/ernestdefoe-cascade.json](https://github.com/flarchive/archive-index/blob/main/packages/ernestdefoe-cascade.json)
 
